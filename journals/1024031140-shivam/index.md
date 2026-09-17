@@ -10,6 +10,6 @@ Module: Admin / Bank portal (platform-wide oversight)
 +  [W2 : Borrower search returns 422 and an empty
    table](./w2-borrower-search-422.md)
 +  [W3 : "High Trust" printed on the worst
-   district](./w3-cluster-label-inversion.md)
+   district](https://github.com/svm-codes-fs/UCS503P-202627-Microfinance-Project/blob/master/journals/1024031140-shivam/W3%20%3A%20%22High%20Trust%22%20printed%20on%20the%20worst%20district.md)
 +  [W4 : KeyError on a field the model artifact never
    had](https://github.com/svm-codes-fs/UCS503P-202627-Microfinance-Project/blob/master/journals/1024031140-shivam/W4%20:%20KeyError%20on%20a%20field%20the%20model%20artifact%20never%20had.md)
