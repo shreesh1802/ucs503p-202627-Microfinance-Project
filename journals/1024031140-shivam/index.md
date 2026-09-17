@@ -3,13 +3,13 @@
 Roll No. 1024031140
 Name: Shivam Raj
 
-+  [...]
+Module: Admin / Bank portal (platform-wide oversight)
 
-<!--
-  Add one entry per week, e.g.:
-  +  [W1 : <short title of what you worked on/resolved>](./w1-<slug>.md)
-  Link it here and create the corresponding file in this folder.
-  See journals/1024030xxx-bhanurekha/w1-ticket-resolution.md in the
-  original template for the expected level of detail (what you were
-  doing, what went wrong, what you learned/fixed, and why).
--->
++  [W1 : Session for a role that has no database
+   row](./w1-admin-session-no-db-row.md)
++  [W2 : Borrower search returns 422 and an empty
+   table](./w2-borrower-search-422.md)
++  [W3 : "High Trust" printed on the worst
+   district](./w3-cluster-label-inversion.md)
++  [W4 : KeyError on a field the model artifact never
+   had](./w4-model-health-keyerror.md)
