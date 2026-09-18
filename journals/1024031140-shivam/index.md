@@ -3,13 +3,13 @@
 Roll No. 1024031140
 Name: Shivam Raj
 
-+  [...]
+Module: Admin / Bank portal (platform-wide oversight)
 
-<!--
-  Add one entry per week, e.g.:
-  +  [W1 : <short title of what you worked on/resolved>](./w1-<slug>.md)
-  Link it here and create the corresponding file in this folder.
-  See journals/1024030xxx-bhanurekha/w1-ticket-resolution.md in the
-  original template for the expected level of detail (what you were
-  doing, what went wrong, what you learned/fixed, and why).
--->
++  [W1 : Session for a role that has no database
+   row](https://github.com/svm-codes-fs/UCS503P-202627-Microfinance-Project/blob/master/journals/1024031140-shivam/w1-admin-session-no-db-row.md)
++  [W2 : Borrower search returns 422 and an empty
+   table](https://github.com/svm-codes-fs/UCS503P-202627-Microfinance-Project/blob/master/journals/1024031140-shivam/w2-borrower-search-422.md)
++  [W3 : "High Trust" printed on the worst
+   district](https://github.com/svm-codes-fs/UCS503P-202627-Microfinance-Project/blob/master/journals/1024031140-shivam/w3-cluster-label-inversion.md)
++  [W4 : KeyError on a field the model artifact never
+   had](https://github.com/svm-codes-fs/UCS503P-202627-Microfinance-Project/blob/master/journals/1024031140-shivam/w4-model-health-keyerror.md)
