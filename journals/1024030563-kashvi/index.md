@@ -3,7 +3,7 @@
 Roll No. 1024030563
 Name: Kashvi Bansal
 
-+  [...]
+Module: SHG Management Module
 
 <!--
   Add one entry per week, e.g.:
@@ -13,3 +13,8 @@ Name: Kashvi Bansal
   original template for the expected level of detail (what you were
   doing, what went wrong, what you learned/fixed, and why).
 -->
+- [W1 : SHG requirements and data design](./w1-shg-requirements-and-data-design.md)
+- [W2 : SHG backend and API development](./w2-shg-backend-and-access-control.md)
+- [W3 : SHG dashboard frontend](./w3-shg-dashboard.md)
+- [W4 : SHG-lender integration](./w4-shg-lender-integration.md)
+- [W5 : SHG testing and refinement](./w5-shg-testing-and-refinement.md)
