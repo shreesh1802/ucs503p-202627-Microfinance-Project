@@ -3,7 +3,25 @@
 Roll No. 1024030564
 Name: Maanya Garg
 
-+  [...]
+## Contribution Overview
+
+My work on CreditSetu focuses on the lender side of the platform. The lender
+acts as the decision-making side of the lending workflow, interacting with
+eligible borrowers, loan requests, SHG relationships and lender-specific
+marketplace information.
+
+The journal documents the technical implementation and reasoning behind
+these workflows.
+
+## Weekly Progress
+
+### Week 1 — Lender Workflow
+
+[W1: Understanding and Implementing the Lender Workflow](./w1-lender-workflow.md)
+
+### Week 2 — Lending Decisions
+
+[W2: From Borrower Eligibility to Lending Decision](./w2-lending-decision.md)
 
 <!--
   Add one entry per week, e.g.:
