@@ -41,6 +41,24 @@ export function AuthProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    // Only one role can be logged in per browser at a time (STORAGE_KEY is
+    // shared across tabs by design). Without this, logging into a second
+    // role in another tab silently logs out every other tab's session --
+    // but their React state keeps showing the stale dashboard until the
+    // next navigation/reload, which looks like data "isn't syncing".
+    const onStorage = (e) => {
+      if (e.key !== STORAGE_KEY) return
+      try {
+        setAuth(e.newValue ? JSON.parse(e.newValue) : null)
+      } catch {
+        setAuth(null)
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+
   const login = useCallback((role, token, id, name) => {
     const next = { role, token, id, name }
     setAuth(next)
