@@ -5,6 +5,7 @@ Name: Shreesh Gupta
 
 +  [W1 : Role-based redesign, payments, and CI/CD debugging](./w1-role-based-redesign.md)
 +  [W2 : Prototype Stage report, UML diagrams, and toolchain setup](./w2-prototype-report-and-uml-diagrams.md)
++  [W3 : Repay flow end-to-end test, two data bugs, and a noisy score fix](./w3-repay-flow-and-scoring-fix.md)
 
 <!--
   Add one entry per week, e.g.:
