@@ -306,11 +306,11 @@ def seed_loans_and_repayments(db, individual, z_observed):
             p_default = float(np.clip(2.0 * trouble - 0.25, 0.02, 0.95))
             if rng.random() < p_default:
                 loan.status = "Defaulted"
-            elif events_so_far == tenure and loan.outstanding_balance <= 0.01:
+            elif loan.outstanding_balance <= 0.01:
                 loan.status = "Closed"
             else:
                 loan.status = "Active"
-        elif events_so_far == tenure and loan.outstanding_balance <= 0.01:
+        elif loan.outstanding_balance <= 0.01:
             loan.status = "Closed"
         else:
             loan.status = "Active"
@@ -380,6 +380,13 @@ def run():
         lenders = seed_lenders(db)
         seed_shg_lender_links(db, shgs, lenders)
         db.commit()
+
+        # The loans above were seeded before lenders/links existed; attribute
+        # them to a lender the marketplace rules would actually allow.
+        from app.ml.migrate_loan_lenders import backfill_loan_lenders
+        assigned, left_null = backfill_loan_lenders(db)
+        db.commit()
+        print(f"Attributed {assigned} seeded loans to a lender ({left_null} left unattributed).")
 
         print(f"Done. Districts={len(districts)} SHGs={len(shgs)} "
               f"SHG-linked individuals={n_shg_members} independents={n_independent} "

@@ -39,12 +39,16 @@ def cycle_info(db: Session, loan: Loan) -> dict:
     """Returns emi, cycle_number, amount_due_this_cycle, theoretical_due_date,
     will_be_late -- all computed fresh, never stored (§2.2-2.4)."""
     emi = compute_emi(loan)
-    n_paid = (
+    # Every recorded event (On_Time / Late / Partial / Missed) resolves its
+    # cycle: a Missed or Partial cycle is history, not a debt that blocks the
+    # pointer forever. Counting only On_Time/Late left a Missed cycle "due"
+    # indefinitely with a due date that contradicted the Missed row itself.
+    n_resolved = (
         db.query(RepaymentEvent)
-        .filter(RepaymentEvent.loan_id == loan.id, RepaymentEvent.status.in_(("On_Time", "Late")))
+        .filter(RepaymentEvent.loan_id == loan.id)
         .count()
     )
-    cycle_number = n_paid + 1
+    cycle_number = n_resolved + 1
     theoretical_due_date = loan.disbursement_date + timedelta(days=30 * cycle_number)
     will_be_late = date.today() > theoretical_due_date
     return {
@@ -82,6 +86,10 @@ def active_loans_due_summary(db: Session, individual: Individual) -> dict:
         # off in substance even if a status flip hasn't landed yet -- omit
         # from the payable list (§2.3).
         if info["cycle_number"] > loan.tenure_months:
+            continue
+        # Nothing owed: balance already cleared (the seed generator tracks
+        # principal-only balances, so some loans hit 0 before their last EMI).
+        if loan.outstanding_balance <= 0.01:
             continue
         info["payable"] = wallet_balance >= info["amount_due_this_cycle"]
         items.append((loan, info))
@@ -148,7 +156,7 @@ def pay_loan(db: Session, individual: Individual, loan_id: int, compute_and_stor
     individual.wallet_balance = round((individual.wallet_balance or 0.0) - emi, 2)
 
     loan.outstanding_balance = max(0.0, loan.outstanding_balance - emi)
-    if cycle_number >= loan.tenure_months:
+    if cycle_number >= loan.tenure_months or loan.outstanding_balance <= 0.01:
         loan.status = "Closed"
 
     db.flush()

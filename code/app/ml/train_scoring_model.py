@@ -36,6 +36,12 @@ from app.services.features import FEATURE_COLUMNS, compute_raw_features
 MIN_REPAYMENT_EVENTS = 3       # need at least a few data points per person to trust their rates
 TRAIN_ON_SHG_LINKED_ONLY = True  # see module docstring -- Stage 2 scope per the project plan
 
+MONOTONE_ON_P_DEFAULT = {
+    "on_time_rate": -1, "savings_regularity": -1, "attendance_rate": -1,
+    "shg_peer_repayment_rate": -1,
+    "late_rate": 1, "partial_rate": 1, "missed_rate": 1, "avg_days_late": 1,
+}
+
 MODEL_PATH = ARTIFACTS_DIR / "scoring_model.json"
 META_PATH = ARTIFACTS_DIR / "scoring_meta.json"
 
@@ -77,10 +83,16 @@ def run():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
+    # Monotone constraints, expressed on P(default): more of a "good" behaviour
+    # can only lower default risk (-1), more of a "bad" one can only raise it
+    # (+1). Without these the trees fit noise on ~470 rows, so e.g. a borrower
+    # with a higher late_rate or avg_days_late could score *higher*.
+    cons = "(" + ",".join(str(MONOTONE_ON_P_DEFAULT.get(c, 0)) for c in FEATURE_COLUMNS) + ")"
     model = xgb.XGBClassifier(
         n_estimators=200, max_depth=4, learning_rate=0.05,
         subsample=0.9, colsample_bytree=0.9,
         eval_metric="logloss", random_state=42,
+        monotone_constraints=cons,
     )
     model.fit(X_train, y_train)
 

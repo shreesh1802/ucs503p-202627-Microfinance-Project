@@ -17,9 +17,14 @@ import numpy as np
 
 TODAY = date.today()
 
+# NOTE: `n_repayment_events` is deliberately NOT a model feature (it is still
+# computed in compute_raw_features, where the cold-start blend and anomaly
+# detection use it). As a feature it measures history *length*, not repayment
+# quality, and made the score step up/down by tens of points every time any
+# payment -- on time or not -- was recorded.
 FEATURE_COLUMNS = [
     "monthly_income", "has_bank_account", "is_shg_linked",
-    "n_loans", "n_closed_loans", "n_repayment_events",
+    "n_loans", "n_closed_loans",
     "on_time_rate", "late_rate", "partial_rate", "missed_rate",
     "avg_days_late", "savings_regularity", "savings_consistency",
     "shg_tenure_months", "attendance_rate", "shg_peer_repayment_rate",

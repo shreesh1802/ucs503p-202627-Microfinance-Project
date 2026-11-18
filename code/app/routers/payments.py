@@ -17,7 +17,7 @@ router = APIRouter(prefix="/api/payments", tags=["payments"])
 def _loan_row(loan: Loan, info: dict) -> dict:
     return {
         "loan_id": loan.id,
-        "lender_name": loan.lender.name if loan.lender else None,
+        "lender_name": loan.lender.name if loan.lender else "Lender not recorded",
         "purpose": loan.purpose,
         "principal_amount": loan.principal_amount,
         "interest_rate": loan.interest_rate,

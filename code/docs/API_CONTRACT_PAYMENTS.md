@@ -106,8 +106,9 @@ columns — no dependency on `RepaymentEvent` history existing yet.
 ### 2.3 Cycle pointer
 
 ```python
-n_paid = count(RepaymentEvent for this loan where status in ("On_Time", "Late"))
-cycle_number = n_paid + 1          # 1-indexed, next EMI due
+n_resolved = count(RepaymentEvent for this loan, any status)   # Missed/Partial cycles are resolved history too
+cycle_number = n_resolved + 1      # 1-indexed, next EMI due
+# Loans with outstanding_balance <= 0.01 are omitted (nothing owed) and closed on payment.
 amount_due_this_cycle = emi        # flat EMI, no partial-shortfall carry-forward (§4.3)
 ```
 
