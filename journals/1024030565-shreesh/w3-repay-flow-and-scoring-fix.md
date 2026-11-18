@@ -106,6 +106,36 @@ appended).
 | Late scores higher than On_Time | 17-21% | 5% |
 | Missed scores better than On_Time | not measured | 0% (36% ties) |
 
+## Final run: everything together
+
+After all four fixes (loan closing, missed cycles, scoring, lender names) were
+in, I ran the whole repay flow once more from a backed-up database and
+restored it afterwards. Borrower 424 started at wallet Rs. 14,272.50.
+
+Through the API: the due summary now listed two loans (Household 619 gone),
+each with a lender name ("Rural Trust NBFC") and the Small business loan at
+EMI #18 of 24. Paying it moved the wallet to 13,198.09 -- exactly the EMI --
+recorded a Late payment (59 days) and lowered the score 858 -> 849, the
+direction the new model is supposed to move. Every error case still behaved:
+paying the already-closed loan 619 -> 400, someone else's loan or due summary
+-> 403, unknown loan -> 404, wallet too small (borrower 1: 774.71 against
+1,293.50 due) -> 400 `insufficient_funds`, no token -> 401.
+
+Through the real UI: logged in as the borrower, opened Repay, signed into the
+mock gateway, and the page already reflected the API payment (wallet 13,198.09,
+Small business at EMI #19). Each row now read "Rural Trust NBFC · Purpose"
+instead of a blank lender. Paying the Agriculture loan showed "Paid Rs. 2,052.66
+-- Late", moved the wallet to 11,145.43 (13,198.09 - 2,052.66) and advanced the
+cycle EMI #6 -> #7. The database matched: two new Late repayment events (59 and
+46 days), reduced loan balances, and score rows noted "Recomputed after live
+repayment". The server log had no 500s -- the only 401/403s were the app's own
+pre-login session check and my deliberate wrong-owner / no-token tests -- and
+the database was restored to its starting state (wallet 14,272.50, 16,993
+events) at the end.
+
+Scope of that run: one borrower through the UI (plus one more for the
+insufficient-funds case), not the whole population.
+
 ## What I'd flag
 
 - About 68% of borrowers see no change at all from a single extra On_Time
