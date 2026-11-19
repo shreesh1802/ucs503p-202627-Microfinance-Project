@@ -18,7 +18,7 @@ function LoansTable({ loans }) {
       </thead>
       <tbody>
         {loans.map((l) => (
-          <tr key={l.id}>
+          <tr key={l.id} data-loan-id={l.id}>
             <td>Rs. {l.principal_amount.toLocaleString('en-IN')}</td>
             <td>{l.interest_rate}%</td>
             <td>{l.tenure_months}mo</td>
@@ -61,6 +61,7 @@ function LenderPicker({ eligibility, mode, setMode, selectedLenderId, setSelecte
             type="radio"
             name="lender-mode"
             checked={mode === 'specific'}
+            data-tour="b-mode-specific"
             onChange={() => setMode('specific')}
             disabled={noneEligible}
             title={noneEligible ? 'No lenders currently meet the eligibility criteria for this request.' : undefined}
@@ -78,7 +79,7 @@ function LenderPicker({ eligibility, mode, setMode, selectedLenderId, setSelecte
         ) : (
           <div className="lender-picker-list">
             {lenders.map((l) => (
-              <label key={l.id} className={`lender-row${selectedLenderId === l.id ? ' selected' : ''}`}>
+              <label key={l.id} className={`lender-row${selectedLenderId === l.id ? ' selected' : ''}`} data-tour="b-lender-opt" data-lender-id={l.id}>
                 <input
                   type="radio"
                   name="lender"
@@ -155,9 +156,9 @@ function RequestLoanForm({ individualId, token, onCreated }) {
       )}
       <form onSubmit={submit}>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          <input type="number" min="1" value={principal} onChange={(e) => setPrincipal(e.target.value)} style={{ width: 110 }} title="Principal (Rs.)" />
-          <input type="number" min="1" value={tenure} onChange={(e) => setTenure(e.target.value)} style={{ width: 90 }} title="Tenure (months)" />
-          <input placeholder="Purpose (optional)" value={purpose} onChange={(e) => setPurpose(e.target.value)} style={{ flex: 1, minWidth: 160 }} />
+          <input type="number" min="1" value={principal} onChange={(e) => setPrincipal(e.target.value)} style={{ width: 110 }} title="Principal (Rs.)" data-tour="b-principal" />
+          <input type="number" min="1" value={tenure} onChange={(e) => setTenure(e.target.value)} style={{ width: 90 }} title="Tenure (months)" data-tour="b-tenure" />
+          <input placeholder="Purpose (optional)" value={purpose} onChange={(e) => setPurpose(e.target.value)} style={{ flex: 1, minWidth: 160 }} data-tour="b-purpose" />
         </div>
 
         <LenderPicker
@@ -168,7 +169,7 @@ function RequestLoanForm({ individualId, token, onCreated }) {
           setSelectedLenderId={setSelectedLenderId}
         />
 
-        <button className="btn primary" type="submit" disabled={busy || !principal || !tenure || (mode === 'specific' && !selectedLenderId)} style={{ marginTop: 12 }}>
+        <button className="btn primary" type="submit" disabled={busy || !principal || !tenure || (mode === 'specific' && !selectedLenderId)} style={{ marginTop: 12 }} data-tour="b-request-submit">
           {busy ? 'Requesting...' : 'Request loan'}
         </button>
         {error && <div className="error-banner" style={{ marginTop: 10, marginBottom: 0 }}>{error}</div>}
@@ -218,7 +219,7 @@ function RequestsTable({ requests, eligibleLenders, onWithdraw, onRetarget }) {
       </thead>
       <tbody>
         {requests.map((r) => (
-          <tr key={r.id}>
+          <tr key={r.id} data-tour="b-request-row" data-request-id={r.id} data-status={r.status}>
             <td>Rs. {r.requested_principal.toLocaleString('en-IN')}</td>
             <td>{r.requested_tenure}mo</td>
             <td className="muted">{r.purpose || '--'}</td>
@@ -228,7 +229,7 @@ function RequestsTable({ requests, eligibleLenders, onWithdraw, onRetarget }) {
             <td>
               {r.status === 'Pending' && (
                 <>
-                  <button className="btn critical" onClick={() => onWithdraw(r.id)}>Withdraw</button>
+                  <button className="btn critical" onClick={() => onWithdraw(r.id)} data-tour="b-withdraw">Withdraw</button>
                   {r.target_lender_id && (
                     <RetargetControl request={r} eligibleLenders={eligibleLenders} onRetarget={onRetarget} />
                   )}
@@ -275,7 +276,7 @@ function OffersTable({ offers, onDecide }) {
 function SuggestedLendersCard({ individualId, token }) {
   const { data, loading, error } = useApi(() => api.suggestedLenders(individualId, token), [individualId])
   return (
-    <div className="card">
+    <div className="card" data-tour="b-suggested">
       <h2>Suggested lenders for you</h2>
       <p className="card-sub">Lenders you're currently eligible for, ranked by their base interest rate.</p>
       {loading && <div className="loading">Loading...</div>}
@@ -336,14 +337,14 @@ function OwnShgCard({ shgId, token }) {
   const { data, loading, error } = useApi(() => (shgId ? api.getShg(shgId, token) : Promise.resolve(null)), [shgId])
   if (!shgId) {
     return (
-      <div className="card">
+      <div className="card" data-tour="b-shg">
         <h2>Your SHG</h2>
         <p className="muted small">You're an independent borrower -- not linked to a Self-Help Group.</p>
       </div>
     )
   }
   return (
-    <div className="card">
+    <div className="card" data-tour="b-shg">
       <h2>Your SHG</h2>
       {loading && <div className="loading">Loading...</div>}
       {error && <div className="error-banner">{error}</div>}
@@ -413,7 +414,7 @@ export default function BorrowerDashboard() {
       <p className="page-intro">Your own credit history, improvement tips, and matching lenders -- nothing about any other borrower.</p>
 
       <div className="grid cols-2">
-        <div className="card">
+        <div className="card" data-tour="b-score">
           <h2>{detail.name}</h2>
           <p className="card-sub">
             {detail.district} &middot; {detail.occupation} &middot;{' '}
@@ -434,14 +435,14 @@ export default function BorrowerDashboard() {
           </p>
         </div>
 
-        <div className="card">
+        <div className="card" data-tour="b-history">
           <h2>Your score history</h2>
           <p className="card-sub">How your score has moved as your repayment history accumulated.</p>
           <ScoreHistoryChart history={history} />
         </div>
       </div>
 
-      <div className="card">
+      <div className="card" data-tour="b-shap">
         <h2>Why you got this score</h2>
         <p className="card-sub">
           Each bar is a SHAP-derived contribution in score points, relative to what a typical borrower in the
@@ -451,7 +452,7 @@ export default function BorrowerDashboard() {
       </div>
 
       {detail.improvement_tips?.length > 0 && (
-        <div className="card notice-banner">
+        <div className="card notice-banner" data-tour="b-tips">
           <h2>Ways to improve your score</h2>
           <ul>
             {detail.improvement_tips.map((t, i) => <li key={i}>{t}</li>)}
@@ -459,12 +460,12 @@ export default function BorrowerDashboard() {
         </div>
       )}
 
-      <div className="card">
+      <div className="card" data-tour="b-loans">
         <h2>Your loan history</h2>
         <LoansTable loans={detail.loans} />
       </div>
 
-      <div className="card">
+      <div className="card" data-tour="b-request">
         <h2>Need a loan?</h2>
         <p className="card-sub">
           Request one directly -- it's broadcast to every lender you're currently eligible for (via your SHG's
@@ -475,13 +476,13 @@ export default function BorrowerDashboard() {
       </div>
 
       <div className="grid cols-2">
-        <div className="card">
+        <div className="card" data-tour="b-offers">
           <h2>Your loan offers</h2>
           <p className="card-sub">Offers a lender has proposed to you directly.</p>
           <OffersTable offers={offers} onDecide={handleDecideOffer} />
         </div>
 
-        <div className="card">
+        <div className="card" data-tour="b-requests">
           <h2>Your loan requests</h2>
           <p className="card-sub">Requests you've made, and how lenders responded.</p>
           <RequestsTable

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthContext'
+import { useTour } from '../../tour/TourContext'
 
 const ROLE_NAV = [
   { role: 'borrower', label: 'Borrower' },
@@ -12,6 +13,7 @@ const DASHBOARD_PATH = { borrower: '/borrower', lender: '/lender', shg: '/shg', 
 
 export default function Header() {
   const { auth, logout } = useAuth()
+  const { openChooser } = useTour()
   const navigate = useNavigate()
   const [contrast, setContrast] = useState(() => {
     try {
@@ -103,6 +105,7 @@ export default function Header() {
               </NavLink>
             )
           })}
+          <button type="button" className="nav-demo-btn" onClick={openChooser}>&#9654; Guided demo</button>
         </div>
       </nav>
     </>

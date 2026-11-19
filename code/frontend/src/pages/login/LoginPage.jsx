@@ -69,7 +69,7 @@ export default function LoginPage({ role }) {
         CreditSetu uses four separate, role-gated logins -- each role only ever sees its own data, never anyone
         else's.
       </p>
-      <div className="card" style={{ maxWidth: 420 }}>
+      <div className="card" style={{ maxWidth: 420 }} data-tour="login-card">
         <h2>Log in</h2>
         <p className="card-sub">{meta.hint}</p>
         <form onSubmit={submit}>
@@ -92,7 +92,7 @@ export default function LoginPage({ role }) {
               autoComplete="current-password"
             />
             {error && <div className="error-banner" style={{ marginBottom: 0 }}>{error}</div>}
-            <button className="btn primary" type="submit" disabled={busy || !idValue || !password}>
+            <button className="btn primary" type="submit" disabled={busy || !idValue || !password} data-tour="login-submit">
               {busy ? 'Logging in...' : 'Log in'}
             </button>
           </div>

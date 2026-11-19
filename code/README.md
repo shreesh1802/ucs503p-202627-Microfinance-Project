@@ -182,6 +182,49 @@ A borrower can repay their active loans from "Repay" on their dashboard
 Design docs: `docs/REQUIREMENTS_PAYMENTS.md`, `docs/DESIGN_PAYMENTS.md`,
 `docs/API_CONTRACT_PAYMENTS.md`.
 
+## Guided demo (step-by-step tour for each role)
+
+With the API and frontend running (see "Running it"), press **▶ Guided demo**
+in the top navigation, or **Start guided demo** on the home page, and pick a
+tour. The tour drives the real app by itself: it logs in as each role through
+the real login form, opens pages, types and clicks, highlights what each step
+is about, and explains it in a panel at the bottom of the screen.
+
+| Tour | Steps | What it covers | Changes data? |
+|---|---|---|---|
+| End-to-end: from loan request to repayment | 16 | Borrower requests a loan from a chosen lender, lender approves it at 14%, borrower repays the first EMI, admin sees the new loan | Yes: 1 request, 1 loan, 1 repayment |
+| Borrower | 15 | Score and risk band, score history, SHAP explanation, tips, loans, suggested lenders, request a loan, withdraw it, offers, own SHG, pay an EMI | Yes: 1 request (withdrawn), 1 repayment |
+| Lender | 11 | Reputation, SHGs by district, partnership requests, linked SHGs and members, eligible borrowers (offer form opened, not sent), incoming requests, offers | No |
+| Self-help group | 7 | Group stats, lender partnerships and who decides them, link request, members' scores | No |
+| Bank / admin | 10 | Portfolio, loan status, anomaly flags, district trust map, model health, all partnerships, borrower search | No |
+
+**Panel controls** (same as the RL autoscaler demo): step counter, a list to
+jump to any step, **Previous / Next**, **Pause / Auto-play** (auto-play moves on
+once the narration finishes, with a timer bar), **Voice on/off** with a voice
+picker (browser speech; it prefers a natural male English voice and sounds best
+in Microsoft Edge), **Hide text**, and **Close**. Previous and Next are disabled
+while a step is still working.
+
+- **Demo accounts are picked automatically.** At the start the tour signs in as
+  the admin behind the scenes and chooses, from whatever data is in the
+  database, an SHG member with a payable EMI and an eligible lender, plus that
+  lender and the member's SHG. It checks those logins work first, so the tour
+  keeps working after a reseed. The choice is kept for the browser session.
+- **Steps that change data run once per tour.** Going back with Previous, or
+  jumping to an earlier step, shows the result again but never repeats a
+  submission, approval or payment.
+- **It uses the seeded demo credentials**: `password123` for borrowers,
+  lenders and SHGs, `admin` / `admin123`, and the gateway's `abc` / `123`.
+- **To reset the demo data** after the end-to-end or borrower tour, back up
+  `data/microfin.db` before presenting and copy it back afterwards. Or reseed:
+  run `data_gen` and the steps after it in "Running it".
+
+The tour code is in `frontend/src/tour/`: `scripts.js` holds the steps and
+narration for each tour, `TourContext.jsx` the engine and panel,
+`accounts.js` the demo-account lookup, `voice.js` the narration, and `dom.js`
+the helpers that type and click. Pages mark the elements a step points at
+with `data-tour="..."` attributes.
+
 ## Setup
 
 ```bash
@@ -307,6 +350,11 @@ were bugs:
     On_Time for ~20%: the unconstrained model fit noise on ~475 rows, and
     `n_repayment_events` (history length) was a feature. Fixed with monotone
     constraints and dropping that feature (see "Scoring pipeline").
+12. **Paying off a loan made its row vanish.** Found by the guided demo: after
+    the payment that closes a loan, the Repay page reloads the due list, the
+    closed loan drops out of it, and its "Paid" confirmation disappeared with
+    it. Paid rows are now kept on screen with their result, and say when the
+    loan is fully repaid and closed.
 
 All of the above were caught by actually running the pipeline end-to-end
 (training on real data, scoring real individuals, hitting the live API,

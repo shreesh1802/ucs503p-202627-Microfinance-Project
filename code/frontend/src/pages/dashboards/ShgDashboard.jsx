@@ -60,7 +60,7 @@ export default function ShgDashboard() {
       <h1>{shg.name}</h1>
       <p className="page-intro">{shg.village}, {shg.district} &middot; formed {shg.formed_date}</p>
 
-      <div className="card">
+      <div className="card" data-tour="s-stats">
         <h2>Group stats</h2>
         <div className="grid cols-4">
           <div className="stat-tile"><p className="label">Members</p><p className="value">{shg.n_members_actual}</p></div>
@@ -70,7 +70,7 @@ export default function ShgDashboard() {
         </div>
       </div>
 
-      <div className="card">
+      <div className="card" data-tour="s-links">
         <h2>Linked lenders</h2>
         <p className="card-sub">Approving a lender here makes your members visible to it in the matching view.</p>
         <table>
@@ -99,7 +99,7 @@ export default function ShgDashboard() {
             )}
           </tbody>
         </table>
-        <div className="search-row" style={{ marginTop: 16 }}>
+        <div className="search-row" style={{ marginTop: 16 }} data-tour="s-link-request">
           <select value={pickLender} onChange={(e) => setPickLender(e.target.value)}>
             <option value="">Request a link to...</option>
             {availableLenders.map((l) => <option key={l.id} value={l.id}>{l.name} ({l.type})</option>)}
@@ -108,7 +108,7 @@ export default function ShgDashboard() {
         </div>
       </div>
 
-      <div className="card">
+      <div className="card" data-tour="s-members">
         <h2>Members</h2>
         <table>
           <thead><tr><th>Name</th><th>Score</th></tr></thead>

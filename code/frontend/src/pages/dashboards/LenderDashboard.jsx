@@ -9,7 +9,7 @@ import { useApi } from '../../hooks/useApi'
 function ReputationCard({ lenderId, token }) {
   const { data, loading, error } = useApi(() => api.lenderReputation(lenderId, token), [lenderId])
   return (
-    <div className="card">
+    <div className="card" data-tour="l-rep">
       <h2>Your reputation score</h2>
       <p className="card-sub">A marketplace ranking badge -- better rates and more activity raise it.</p>
       {loading && <div className="loading">Loading...</div>}
@@ -34,7 +34,7 @@ function ShgsByDistrict({ token }) {
   const districts = [...new Set(data.map((s) => s.district))].sort()
   const rows = filter ? data.filter((s) => s.district === filter) : data
   return (
-    <div className="card">
+    <div className="card" data-tour="l-shgs">
       <h2>SHGs by district</h2>
       <p className="card-sub">Browse Self-Help Groups by area (summary only -- name, village, district, member count).</p>
       <div className="search-row">
@@ -80,7 +80,7 @@ function LinkedShgMembers({ lenderId, token }) {
   if (!links) return <div className="loading">Loading your links...</div>
 
   return (
-    <div className="card">
+    <div className="card" data-tour="l-links">
       <h2>Your linked SHGs</h2>
       <p className="card-sub">
         Approved links let you see full member detail. Pending-incoming links are SHG-initiated requests awaiting
@@ -96,7 +96,7 @@ function LinkedShgMembers({ lenderId, token }) {
               <td>{nameFor(l.shg_id)}</td>
               <td><StatusChip status={l.status} /></td>
               <td className="muted">{l.requested_date}</td>
-              <td><button className="btn" onClick={() => setOpenShg(l.shg_id)}>View members</button></td>
+              <td><button className="btn" onClick={() => setOpenShg(l.shg_id)} data-tour="l-view-members">View members</button></td>
             </tr>
           ))}
           {links.approved.length === 0 && <tr><td colSpan={4} className="muted">No approved links yet.</td></tr>}
@@ -139,7 +139,7 @@ function LinkedShgMembers({ lenderId, token }) {
       </table>
 
       {openShg && shgDetail && (
-        <div className="notice-banner" style={{ marginTop: 16 }}>
+        <div className="notice-banner" style={{ marginTop: 16 }} data-tour="l-members">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <h3 style={{ margin: 0 }}>{shgDetail.name} members</h3>
             <button className="btn" onClick={() => setOpenShg(null)}>Close</button>
@@ -181,7 +181,7 @@ function RequestLinkCard({ lenderId, token, onLinked }) {
   }
 
   return (
-    <div className="card">
+    <div className="card" data-tour="l-link-request">
       <h2>Request a partnership</h2>
       <p className="card-sub">Send a lender-initiated link request to a Self-Help Group.</p>
       <div className="search-row">
@@ -213,7 +213,7 @@ function OfferForm({ lenderId, individualId, token, onDone }) {
   }
 
   return (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }} data-tour="l-offer-form">
       <input type="number" value={principal} onChange={(e) => setPrincipal(e.target.value)} style={{ width: 100 }} title="Principal" />
       <input type="number" value={rate} onChange={(e) => setRate(e.target.value)} style={{ width: 70 }} title="Rate %" />
       <input type="number" value={tenure} onChange={(e) => setTenure(e.target.value)} style={{ width: 70 }} title="Tenure (months)" />
@@ -232,7 +232,7 @@ function EligibleBorrowersCard({ lenderId, token }) {
   }
 
   return (
-    <div className="card">
+    <div className="card" data-tour="l-eligible">
       <h2>Eligible borrowers</h2>
       <p className="card-sub">
         Members of SHGs approved with you, plus independents (if you serve them), who clear your score threshold.
@@ -249,7 +249,7 @@ function EligibleBorrowersCard({ lenderId, token }) {
               <td>
                 {offeringFor === b.individual_id
                   ? <OfferForm lenderId={lenderId} individualId={b.individual_id} token={token} onDone={handleOfferDone} />
-                  : <button className="btn" onClick={() => setOfferingFor(b.individual_id)}>Propose offer</button>}
+                  : <button className="btn" onClick={() => setOfferingFor(b.individual_id)} data-tour="l-propose">Propose offer</button>}
               </td>
             </tr>
           ))}
@@ -273,7 +273,7 @@ function OffersCard({ lenderId, token }) {
     }
   }
   return (
-    <div className="card">
+    <div className="card" data-tour="l-offers">
       <h2>Your offers</h2>
       <table>
         <thead><tr><th>Borrower</th><th>Principal</th><th>Rate</th><th>Tenure</th><th>Status</th><th></th></tr></thead>
@@ -329,8 +329,8 @@ function RequestDecisionForm({ requestId, lenderId, token, onDone }) {
 
   return (
     <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-      <input type="number" value={rate} onChange={(e) => setRate(e.target.value)} style={{ width: 70 }} title="Rate %" />
-      <button className="btn good" disabled={busy} onClick={approve}>Approve</button>
+      <input type="number" value={rate} onChange={(e) => setRate(e.target.value)} style={{ width: 70 }} title="Rate %" data-tour="l-rate" />
+      <button className="btn good" disabled={busy} onClick={approve} data-tour="l-approve">Approve</button>
       <button className="btn critical" disabled={busy} onClick={decline}>Decline</button>
     </div>
   )
@@ -342,7 +342,7 @@ function LoanRequestsCard({ lenderId, token }) {
   const decided = (requests || []).filter((r) => r.status !== 'Pending')
 
   return (
-    <div className="card">
+    <div className="card" data-tour="l-requests">
       <h2>Incoming loan requests</h2>
       <p className="card-sub">
         Borrower-initiated requests you're currently eligible to fund -- approving one creates the loan
@@ -352,7 +352,7 @@ function LoanRequestsCard({ lenderId, token }) {
         <thead><tr><th>Borrower</th><th>Principal</th><th>Tenure</th><th>Purpose</th><th>Status</th><th></th></tr></thead>
         <tbody>
           {pending.map((r) => (
-            <tr key={r.id}>
+            <tr key={r.id} data-tour="l-request-row" data-request-id={r.id} data-status={r.status}>
               <td>{r.individual_name}</td>
               <td>Rs. {r.requested_principal.toLocaleString('en-IN')}</td>
               <td>{r.requested_tenure}mo</td>
@@ -362,7 +362,7 @@ function LoanRequestsCard({ lenderId, token }) {
             </tr>
           ))}
           {decided.map((r) => (
-            <tr key={r.id}>
+            <tr key={r.id} data-tour="l-request-row" data-request-id={r.id} data-status={r.status}>
               <td>{r.individual_name}</td>
               <td>Rs. {r.requested_principal.toLocaleString('en-IN')}</td>
               <td>{r.requested_tenure}mo</td>

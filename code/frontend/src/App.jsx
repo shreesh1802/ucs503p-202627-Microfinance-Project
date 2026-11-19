@@ -10,10 +10,12 @@ import RepayPage from './pages/dashboards/RepayPage'
 import ShgDashboard from './pages/dashboards/ShgDashboard'
 import HomeView from './pages/HomeView'
 import LoginPage from './pages/login/LoginPage'
+import { TourProvider } from './tour/TourContext'
 
 export default function App() {
   return (
     <AuthProvider>
+      <TourProvider>
       <Header />
       <main id="main-content">
         <Routes>
@@ -67,6 +69,7 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      </TourProvider>
     </AuthProvider>
   )
 }

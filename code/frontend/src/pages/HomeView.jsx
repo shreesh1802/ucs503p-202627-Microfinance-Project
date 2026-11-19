@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useTour } from '../tour/TourContext'
 import { api } from '../api/client'
 import { useApi } from '../hooks/useApi'
 
@@ -159,11 +160,12 @@ function DistrictImprovement({ rows }) {
 }
 
 export default function HomeView() {
+  const { openChooser } = useTour()
   const { data: highlights } = useApi(() => api.homeHighlights(), [])
 
   return (
     <div>
-      <div className="card hero">
+      <div className="card hero" data-tour="home-hero">
         <span className="badge hero-badge">
           <span className="dot" style={{ background: 'var(--primary)' }} />
           For SHGs &amp; independent borrowers
@@ -181,6 +183,7 @@ export default function HomeView() {
           <Link className="btn" to="/login/lender">Lender login</Link>
           <Link className="btn" to="/login/shg">SHG login</Link>
           <Link className="btn" to="/login/admin">Bank / Admin login</Link>
+          <button type="button" className="btn demo-btn" onClick={openChooser}>&#9654; Start guided demo</button>
         </div>
       </div>
 

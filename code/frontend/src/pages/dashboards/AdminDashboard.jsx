@@ -54,7 +54,7 @@ function AnomaliesCard({ token }) {
   }
 
   return (
-    <div className="card">
+    <div className="card" data-tour="a-anomalies">
       <h2>Anomaly flags</h2>
       <p className="card-sub">
         Isolation-forest outliers over repayment/savings behaviour -- a flag for review, not an automatic penalty.
@@ -87,7 +87,7 @@ function AnomaliesCard({ token }) {
 function ModelHealthCard({ token }) {
   const { data, loading, error } = useApi(() => api.modelHealth(token), [])
   return (
-    <div className="card">
+    <div className="card" data-tour="a-model">
       <h2>Model / scoring health</h2>
       <p className="card-sub">Fig 1: Scoring engine status, read directly from the last training artifact.</p>
       {loading && <div className="loading">Loading...</div>}
@@ -134,11 +134,11 @@ function IndividualsBrowser({ token }) {
   const { data: detail } = useApi(() => (selected ? api.getIndividual(selected, token) : Promise.resolve(null)), [selected])
 
   return (
-    <div className="card">
+    <div className="card" data-tour="a-borrowers">
       <h2>All borrowers</h2>
       <p className="card-sub">Full population search/browse -- admin-only (read-only oversight).</p>
       <div className="search-row">
-        <input placeholder="Search borrowers..." value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input placeholder="Search borrowers..." value={query} onChange={(e) => setQuery(e.target.value)} data-tour="a-search" />
       </div>
       {loading && <div className="loading">Loading...</div>}
       {error && <div className="error-banner">{error}</div>}
@@ -181,7 +181,7 @@ function IndividualsBrowser({ token }) {
 function LinksOverview({ token }) {
   const { data, loading, error } = useApi(() => api.listLinks({}, token), [])
   return (
-    <div className="card">
+    <div className="card" data-tour="a-links">
       <h2>SHG &ndash; lender links (platform-wide)</h2>
       <p className="card-sub">Read-only -- admin does not decide links, only views them.</p>
       {loading && <div className="loading">Loading...</div>}
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
       {loading && <div className="loading">Loading dashboard...</div>}
       {error && <div className="error-banner">{error}</div>}
       {summary && (
-        <div className="card">
+        <div className="card" data-tour="a-portfolio">
           <h2>Portfolio overview</h2>
           <div className="grid cols-4">
             <StatTile label="Total borrowers" value={summary.n_individuals} />
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
 
       {summary && (
         <div className="grid cols-2">
-          <div className="card">
+          <div className="card" data-tour="a-loans">
             <h2>Loan status</h2>
             <p className="card-sub">{summary.n_loans} loans total &middot; {(summary.default_rate * 100).toFixed(1)}% default rate</p>
             <LoanStatusChart summary={summary} />
@@ -251,7 +251,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      <div className="card">
+      <div className="card" data-tour="a-heatmap">
         <h2>District trust heatmap</h2>
         <p className="card-sub">Fig 2: K-means clusters on avg score / default rate / SHG density, by district.</p>
         <DistrictHeatmap rows={districts} />

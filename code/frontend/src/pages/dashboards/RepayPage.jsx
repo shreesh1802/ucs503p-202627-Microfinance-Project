@@ -11,7 +11,7 @@ const GATEWAY_PASS = '123'
 function LoanRow({ loan, onPay, paying, result, rowError }) {
   const disabled = paying || !loan.payable
   return (
-    <div className="repay-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+    <div className="repay-row" style={{ flexDirection: 'column', alignItems: 'stretch' }} data-tour="r-loan" data-loan-id={loan.loan_id}>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <span className="muted">{loan.lender_name} &middot; {loan.purpose || 'Loan'}</span>
         {loan.will_be_late && <span className="status-chip status-chip-flagged"><span aria-hidden="true">▲</span> LATE</span>}
@@ -22,7 +22,7 @@ function LoanRow({ loan, onPay, paying, result, rowError }) {
           <p className="repay-amount" style={{ margin: 0 }}>Rs. {loan.amount_due_this_cycle.toLocaleString('en-IN')}</p>
         </div>
         {!result && (
-          <button className="btn primary" onClick={() => onPay(loan.loan_id)} disabled={disabled}>
+          <button className="btn primary" onClick={() => onPay(loan.loan_id)} disabled={disabled} data-tour="r-pay">
             {paying ? 'Paying...' : 'Pay this loan'}
           </button>
         )}
@@ -36,9 +36,10 @@ function LoanRow({ loan, onPay, paying, result, rowError }) {
         <div className="error-banner" style={{ marginTop: 6 }}>{rowError}</div>
       )}
       {result && (
-        <div className="repay-success-strip">
+        <div className="repay-success-strip" data-tour="r-result">
           <span aria-hidden="true">✓</span> Paid Rs. {result.amount_paid.toLocaleString('en-IN')} -- {result.status === 'On_Time' ? 'On time' : 'Late'}.{' '}
           New score: <ScoreBadge riskCategory={result.new_score.risk_category} score={result.new_score.score} />
+          {result.loan_status === 'Closed' && <> The loan is now fully repaid and closed.</>}
         </div>
       )}
     </div>
@@ -71,7 +72,7 @@ function GatewayLogin({ onSuccess }) {
         <input id="gw-pass" type="password" placeholder="Password" value={password}
                onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
         {err && <div className="error-banner" style={{ marginBottom: 0 }}>{err}</div>}
-        <button type="submit" className="btn primary" disabled={!username || !password}>
+        <button type="submit" className="btn primary" disabled={!username || !password} data-tour="r-gateway-submit">
           Sign in &amp; continue
         </button>
       </div>
@@ -100,6 +101,10 @@ export default function RepayPage() {
   const [error, setError] = useState(null)
   const [payingId, setPayingId] = useState(null)
   const [results, setResults] = useState({})
+  // Snapshot of each loan as it was when paid. Paying the last instalment
+  // closes the loan, so it drops out of the refreshed due-summary -- without
+  // this the row (and its "Paid" confirmation) would vanish.
+  const [paidLoans, setPaidLoans] = useState({})
   const [rowErrors, setRowErrors] = useState({})
 
   const loadSummary = () => {
@@ -123,8 +128,10 @@ export default function RepayPage() {
     setPayingId(loanId)
     setRowErrors((prev) => ({ ...prev, [loanId]: null }))
     try {
+      const snapshot = summary?.loans.find((l) => l.loan_id === loanId)
       const res = await api.payLoan(loanId, token)
       setResults((prev) => ({ ...prev, [loanId]: res }))
+      if (snapshot) setPaidLoans((prev) => ({ ...prev, [loanId]: snapshot }))
       loadSummary()
     } catch (e) {
       // Per-loan: an insufficient-funds 400 only affects the loan that was
@@ -153,7 +160,7 @@ export default function RepayPage() {
       <div style={{ marginBottom: 12 }}>
         <Link className="btn" to="/borrower">&larr; Back to Dashboard</Link>
       </div>
-      <div className="card">
+      <div className="card" data-tour="r-card">
         <h2>Repay Loan</h2>
 
         {stage === 'login' && <GatewayLogin onSuccess={handleLoginSuccess} />}
@@ -166,7 +173,7 @@ export default function RepayPage() {
 
             {summary && (
               <>
-                <p className="card-sub">Wallet balance: Rs. {summary.wallet_balance.toLocaleString('en-IN')}</p>
+                <p className="card-sub" data-tour="r-wallet">Wallet balance: Rs. {summary.wallet_balance.toLocaleString('en-IN')}</p>
 
                 {summary.loans.length > 1 && (
                   <p className="muted small">
@@ -176,9 +183,12 @@ export default function RepayPage() {
                   </p>
                 )}
 
-                {summary.loans.length === 0 && <p className="muted small">You have no active loans to repay.</p>}
+                {summary.loans.length === 0 && <p className="muted small" data-tour="r-empty">You have no active loans to repay.</p>}
 
-                {summary.loans.map((loan) => (
+                {[
+                  ...summary.loans,
+                  ...Object.values(paidLoans).filter((p) => !summary.loans.some((l) => l.loan_id === p.loan_id)),
+                ].map((loan) => (
                   <LoanRow
                     key={loan.loan_id}
                     loan={loan}
