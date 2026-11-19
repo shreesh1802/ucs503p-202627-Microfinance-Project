@@ -136,6 +136,58 @@ events) at the end.
 Scope of that run: one borrower through the UI (plus one more for the
 insufficient-funds case), not the whole population.
 
+## Feature: a guided demo inside the app
+
+To present the system without clicking through four logins by hand, I added
+an in-app guided demo, modelled on the one in my RL autoscaler project. A
+"Guided demo" button in the navigation (and on the home page) opens a choice
+of five tours:
+
+| Tour | Steps | Changes data? |
+|---|---|---|
+| End-to-end: loan request to repayment (all four roles) | 16 | Yes: 1 request, 1 loan, 1 payment |
+| Borrower | 15 | Yes: 1 request (then withdrawn), 1 payment |
+| Lender | 11 | No |
+| Self-help group | 7 | No |
+| Bank / admin | 10 | No |
+
+The tour drives the real app rather than a recording: it logs in through
+the real login form, opens pages, types and clicks, highlights the element
+each step is about, and explains it in a panel at the bottom. The panel has
+a step counter, a list to jump to any step, Previous / Next, auto-play that
+moves on when the narration ends, spoken narration through the browser's
+speech engine (with a voice picker that prefers a natural male English
+voice), Hide text and Close.
+
+Three design decisions mattered:
+
+- **Demo accounts are discovered, not hard-coded.** Phone numbers change
+  every time the data is reseeded, so the tour signs in as the admin behind
+  the scenes and picks an SHG member who has a payable EMI and an eligible
+  lender, plus that lender and the member's SHG, and checks those logins
+  work before using them.
+- **Data-changing steps run once per tour.** Going back with Previous shows
+  the earlier result again but never repeats a request, approval or payment.
+  Each step marks itself done just before its irreversible click, so even a
+  step that fails afterwards is not repeated. I checked this against the
+  database: jumping back to the payment step left exactly one repayment.
+- **Navigation is locked while a step is still working**, so skipping ahead
+  cannot interrupt a payment halfway.
+
+I ran every tour step by step in the browser: all 16 + 15 + 11 + 7 + 10
+steps passed, auto-play advanced on its own, and narration started when the
+voice was turned on. The database was restored afterwards.
+
+## Bug found by the guided demo: a paid-off loan vanished
+
+The borrower tour's payment step timed out on its first run, even though
+the payment had gone through. The payment closed the loan (its balance
+reached zero), the Repay page reloaded the due list, the closed loan dropped
+out of it, and its row disappeared together with the "Paid" confirmation.
+A real borrower paying off a loan would have seen it simply vanish. The
+page now keeps each paid row on screen with its result and says when the
+loan is fully repaid and closed.
+
 ## What I'd flag
 
 - About 68% of borrowers see no change at all from a single extra On_Time
