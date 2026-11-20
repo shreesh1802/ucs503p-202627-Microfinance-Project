@@ -23,11 +23,30 @@ these workflows.
 
 [W2: From Borrower Eligibility to Lending Decision](./w2-lending-decision.md)
 
-<!--
-  Add one entry per week, e.g.:
-  +  [W1 : <short title of what you worked on/resolved>](./w1-<slug>.md)
-  Link it here and create the corresponding file in this folder.
-  See journals/1024030xxx-bhanurekha/w1-ticket-resolution.md in the
-  original template for the expected level of detail (what you were
-  doing, what went wrong, what you learned/fixed, and why).
--->
+### Week 3 — Eligibility as an Access Rule
+
+[W3: Who a Lender Is Allowed to See](./w3-borrower-eligibility-rules.md)
+
+### Week 4 — Lender Reputation
+
+[W4: Scoring the Lender, Not Just the Borrower](./w4-lender-reputation-score.md)
+
+### Week 5 — Loan Offers
+
+[W5: Offers — the Lender's Side of the Marketplace](./w5-loan-offers.md)
+
+### Week 6 — Request Decisions
+
+[W6: Deciding a Loan Request Without Closing It for Everyone Else](./w6-loan-request-decisions.md)
+
+### Week 7 — Partnerships
+
+[W7: Partnerships From the Lender's Side](./w7-partnerships-lender-side.md)
+
+### Week 8 — Lender Dashboard
+
+[W8: Assembling the Lender Dashboard](./w8-lender-dashboard.md)
+
+### Week 9 — Testing and Limits
+
+[W9: Testing the Lender Flows, and What Is Still Missing](./w9-testing-lender-flows.md)
