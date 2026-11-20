@@ -50,3 +50,5 @@ these workflows.
 ### Week 9 — Testing and Limits
 
 [W9: Testing the Lender Flows, and What Is Still Missing](./w9-testing-lender-flows.md)
+
+- W3–W9 journal entries added
